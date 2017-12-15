@@ -7,50 +7,44 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * @author Jan Cemic
- * Der Server beinhaltet ein Array in dem allen Kontakten vom Typ Mensch sind.
- * Der Server kann die Kontakte bearbeite, löschen, hinzufügen und an einen Clienten senden
- * Der Server gib einiges in die Konsole aus, das dient zum debuggen
- * Der Server kann wenn der Client die Verbindung trennt auf eine neue Vebindung eingehen
- * Der Server kann nur einen Clienten gleichzeitig bedienen
- * Der Server wird von dem Clienten gesteuert
  */
 
-public class Server{
+public class Server extends Thread{
 	
 	static ArrayList<Mensch> personen = new ArrayList<Mensch>();
 	static ArrayList<String> com = new ArrayList<String>();
+	static ArrayList<Socket> clienten = new ArrayList<Socket>();
 	static ServerSocket server;
 	static Socket client;
 	static OutputStream out;
 	static PrintWriter writer;
 	static InputStream in;
 	static BufferedReader reader;
+	static Boolean arbeitend = false;
 	
 /**
  * Startet den Server und bereitet ihn vor
  * @param ags
  */
 public static void main(String ags[]) {
-	try {
-	server = new ServerSocket(5555);
-	System.out.println("Warte auf Verbindung.");
 	start();
 	fillCom();
-	}catch(IOException e) {
-		e.printStackTrace();
-	}
+//	ArrayList<Socket> sockets, ServerSocket server, String nachricht
+	Verbinden verbinden = new Verbinden(clienten, )
 	do {
-		System.out.println("Bereit!");
+			System.out.println("Bereit!");
 		
 		//String name, String plz, String strasse, String hausnummer, String telefonnummer
-		personen.add(new Mensch("Max Mustermann", "123456", "Strassenname", "14", "0123400514"));	
-		personen.add(new Mensch("Max Musterfrau", "123123", "Strassingen", "123", "0102912934921"));
-		personen.add(new Mensch("Frau Mustermax", "123444", "Strassigens", "12", "2341235551235"));
+		personen.add(new Mensch("asdf", "123", "asdf", "asdf", "asdf"));	
+		personen.add(new Mensch("asdrtrt4tf", "123", "asdf", "asdf", "asdf"));	
+		personen.add(new Mensch("asd2342f", "123", "asdf", "asdf", "asdf"));	
 		
 		while(client.isBound()) {
+			//TODO Wenn eine Client die Verbindung trennt soll der Serverauf diese Scließen und auf eine neue warten
 			menu();
 		}
 	}while(true);
@@ -104,14 +98,14 @@ public static void add() {
 public static void ausgeben() {
 		System.out.println("Gebe aus..");
 	writer.write("Alle Eintraege\n");
-	writer.write("Index\tName\t\t\t Plz\t\t Strase\t\t Nr.\t Telefonnummer\n");
+	writer.write("Index\tName\t\t Plz\t\t Strase\t\t Nr.\t Telefonnummer\n");
 	writer.flush();
 	for(int i = 0; i < personen.size(); i++) {
 		writer.write(i + ":\t" + personen.get(i).getName() + "\t\t");
 		writer.write(personen.get(i).getPlz() + "\t\t");
-		writer.write(personen.get(i).getStrasse() + "\t");
-		writer.write(personen.get(i).getHausnummer() + "\t");
-		writer.write(personen.get(i).getTelefonnummer() + "\n");
+		writer.write(personen.get(i).getStrasse() + "\t\t");
+		writer.write(personen.get(i).getHausnummer() + "\t\t");
+		writer.write(personen.get(i).getTelefonnummer() + "\t\t\n");
 		writer.flush();
 	}
 	System.out.println("fertig: ausgeben!");
@@ -171,6 +165,7 @@ public static void loeschen() {
 public static void bearbeiten() {
 		System.out.println("bearbeiten...");
 	writer.write("Welchen Eintrag willst du bearbeiten?");
+	// !TODO! nur einträge bearbeiten die existieren!
 	ausgeben();
 	stop();
 	String s = " ";
@@ -218,6 +213,8 @@ public static void fillCom(){
 public static void start() {
 		System.out.println("starte...");
 	try {
+	server = new ServerSocket(5555);
+		System.out.println("Warte auf Verbindung.");
 	client = server.accept();
 	out = client.getOutputStream();
 	writer = new PrintWriter(out, true);
@@ -226,7 +223,6 @@ public static void start() {
 	}catch(IOException e) {
 		e.printStackTrace();
 	}
-		System.out.println("Verbunden!");
 		System.out.println("fertig: starten!");
 }
 
@@ -238,17 +234,12 @@ public static void menu() {
 	listCom();
 	stop();
 	String s = "0";
-	int i = 10;
+	int i = 0;
 	try {
 	s = reader.readLine();
-	System.err.println(s);
-	if(s.equals("exit") || s == null) {
-		trennen();
-		s = "10";
-	}
-		System.out.println("CLIENT: " + s);
-		System.err.println(i);
+		System.err.println("Client: " + s);
 	i = Integer.valueOf(s);
+	
 	switch(i) {
 		case(1):
 			ausgeben();
@@ -261,7 +252,6 @@ public static void menu() {
 			break;
 		case(4):
 			loeschen();	
-			break;
 		default:
 			writer.write("Try again!\n");
 			menu();
@@ -281,13 +271,35 @@ public static void stop() {
 	writer.write("7789\n");
 	writer.flush();
 	}
-
-/**
- * Die Verbindung des Clienten trennen 
- */
-public static void trennen() {
-		System.out.println("verbindung verloren...");
-	start();
 }
 
+class Verbinden extends Thread{
+	
+	ArrayList<Socket> sockets = null;
+	Server server;
+	String nachricht = null;
+ 	
+	public void run() {
+		try {
+			server = new ServerSocket(5555);
+		}catch(IOException e1){
+			e1.printStackTrace();
+		}
+		do {
+			try {
+				System.out.println("Kann mit Clienten verbinden...");
+				for (int i = 0; i < sockets.size(); i++) {
+					sockets.add(server.accept());
+				}
+				System.out.println("Verbunden");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} while (true);
+	}
+	
+	public Verbinden(ArrayList<Socket> sockets, ServerSocket server, String nachricht) {
+		this.sockets = sockets;
+		this.nachricht = nachricht;
+	}
 }
