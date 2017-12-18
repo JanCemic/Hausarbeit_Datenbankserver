@@ -2,7 +2,7 @@
  * @author Jan Cemic
  * Der Client tut nichts außer den Server fernzusteuern
  * Der Server liest den Input ein, bis er ein Schlüselwort empängt,
- * dann liest er eienn Befehl ein und sendet diesen an den Server
+ * dann liest er einen Befehl ein und sendet diesen an den Server
  */
 
 import java.io.BufferedReader;

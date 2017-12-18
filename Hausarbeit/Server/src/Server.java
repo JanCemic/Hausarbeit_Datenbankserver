@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * Der Server gib einiges in die Konsole aus, das dient zum debuggen
  * Der Server kann wenn der Client die Verbindung trennt auf eine neue Vebindung eingehen
  * Der Server kann nur einen Clienten gleichzeitig bedienen
- * Der Server wird von dem Clienten gesteuert
+ * Der Server wird von dem Clienten aus gesteuert
  */
 
 public class Server{
@@ -48,7 +48,7 @@ public static void main(String ags[]) {
 		//String name, String plz, String strasse, String hausnummer, String telefonnummer
 		personen.add(new Mensch("Max Mustermann", "123456", "Strassenname", "14", "0123400514"));	
 		personen.add(new Mensch("Max Musterfrau", "123123", "Strassingen", "123", "0102912934921"));
-		personen.add(new Mensch("Frau Mustermax", "123444", "Strassigens", "12", "2341235551235"));
+		personen.add(new Mensch("Max Musteretwas", "123444", "Strassigens", "12", "2341235551235"));
 		
 		while(client.isBound()) {
 			menu();
@@ -139,11 +139,15 @@ public static void ausgeben(int i) {
  * bestimmten Eintrag löschen
  */
 public static void loeschen(String s) {	
+	try {
 		System.out.println("lösche Index: " + s);
 	int	i = Integer.valueOf(s);
 	personen.remove(i);	
 		System.out.println("fertig: löschen Index: " + s + " !");
-}
+	}catch(Exception e) {
+		writer.write(("Eintrag nicht Erstellt! You had one job, one simple job!"));
+	}
+}	
 
 /**
  * besteheneden Eintrag wählen und löschen
@@ -170,7 +174,7 @@ public static void loeschen() {
  */
 public static void bearbeiten() {
 		System.out.println("bearbeiten...");
-	writer.write("Welchen Eintrag willst du bearbeiten?");
+	writer.write("Welchen Eintrag willst du bearbeiten?\n");
 	ausgeben();
 	stop();
 	String s = " ";
@@ -189,7 +193,8 @@ public static void bearbeiten() {
  */
 public static void listCom() {
 		System.out.println("Liste Komandos auf...");
-	writer.write("Was willst du tun?\n");
+	writer.write("\n\n\n\n\nWas willst du tun?\n");
+	writer.write("Navigiere mit der Zahl vor der Zeile die du ansprechen willst\n");
 	writer.flush();
 	for(int i = 0; i < com.size(); i++){
 		writer.write(i+1 + ". " + com.get(i)+ "\n");
@@ -241,13 +246,13 @@ public static void menu() {
 	int i = 10;
 	try {
 	s = reader.readLine();
-	System.err.println(s);
+//		System.err.println(s);
 	if(s.equals("exit") || s == null) {
 		trennen();
 		s = "10";
 	}
 		System.out.println("CLIENT: " + s);
-		System.err.println(i);
+//		System.err.println(i);
 	i = Integer.valueOf(s);
 	switch(i) {
 		case(1):
