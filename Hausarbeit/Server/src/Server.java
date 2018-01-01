@@ -11,11 +11,11 @@ import java.util.ArrayList;
 /**
  * @author Jan Cemic
  * Der Server beinhaltet ein Array in dem allen Kontakten vom Typ Mensch sind.
- * Der Server kann die Kontakte bearbeite, löschen, hinzufügen und an einen Clienten senden
- * Der Server gib einiges in die Konsole aus, das dient zum debuggen
- * Der Server kann wenn der Client die Verbindung trennt auf eine neue Vebindung eingehen
- * Der Server kann nur einen Clienten gleichzeitig bedienen
- * Der Server wird von dem Clienten aus gesteuert
+ * Der Server kann die Kontakte bearbeite, löschen, hinzufügen und an einen Clienten senden.
+ * Der Server gib einiges in die Konsole aus, das dient zum debuggen.
+ * Der Server kann wenn der Client die Verbindung trennt auf eine neue Vebindung eingehen.
+ * Der Server kann nur einen Clienten gleichzeitig bedienen.
+ * Der Server wird von dem Clienten aus gesteuert.
  */
 
 public class Server{
